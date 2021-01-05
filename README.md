@@ -1,100 +1,123 @@
----
-ArtifactType: nupkg, executable, azure-web-app, azure-cloud-service, etc. More requirements for artifact type standardization may come later.
-Documentation: URL
-Language: typescript, csharp, java, js, python, golang, powershell, markdown, etc. More requirements for language names standardization may come later.
-Platform: windows, node, linux, ubuntu16, azure-function, etc. More requirements for platform standardization may come later.
-Stackoverflow: URL
-Tags: comma,separated,list,of,tags
----
+# Arc Proxy Simulation
 
-# Project Title. MUST BE topmost header
+------
 
-One Paragraph of project description goes here. Including links to other user docs or a project website is good here as well. This paragraph will be used as a blurb on CodeHub. Please make the first paragraph short and to the point.
+This repo contains Terraform files that can be used to bring up a proxy simulation environment having the following resources:
 
-You can expand on project description in subsequent paragraphs. It is a good practice to explain how this project is used and what other projects depend on it.
+- Proxy server without authentication (plain squid installation)
+- Proxy server with basic authentication
+- Proxy server with cert
+- Single node K8s cluster with Calico and GlobalNetworkPolicy file applied to simulate proxy like environment at the workload plane of cluster. This VM also has Azure CLI, Helm 3 and latest versions of connectedk8s, k8s-extension and k8sconfiguration CLI extensions installed on the VM.
 
-## Getting Started
+## Deploy resources
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+1. [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/azure-get-started#install-terraform) on your machine.
 
-### Prerequisites
+2. Create a service principal having `Contributor` permissions on your subscription
 
-What things you need to install the software and how to install them
-
-``` powershell
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development environment running
-
-1. Describe what needs to be done first
-
-    ``` batch
-    Give an example of performing step 1
+    ```bash
+    az ad sp create-for-rbac
     ```
 
-2. And then repeat for each step
+3. Set the following environment variables
 
-    ``` sh
-    Another example, this time for step 2
+    ```bash
+    export ARM_SUBSCRIPTION_ID="<SubscriptionId>"
+    export ARM_TENANT_ID="<Tenant>"
+    export ARM_CLIENT_ID="<AppId>"
+    export ARM_CLIENT_SECRET="<Password>"
+    export TF_VAR_prefix="<prefix to be used for all resources>"
     ```
 
-## Running the tests
+4. Execute the following commands to deploy the resources declared in the Terraform files:
 
-Explain how to run the tests for this project that are relevant to users. You can also link to the testing portion of [CONTRIBUTING.md](CONTRIBUTING.md) for tests relevant to contributors.
+    ```bash
+    terraform plan
+    terraform apply
+    ```
 
-### End-to-end tests
+## Testing different permutations of proxy
 
-Explain what these tests test and why
+Note down the private IP addresses of the 3 proxy VMs
 
-```
-Give an example
-```
+### Testing with no-auth proxy
 
-### Unit tests
+1. Access console of the <prefix>-clustervm VM by using `Serial Console` on the resource blade of the VM with the following credentials
 
-Explain what these test and why
+    ```bash
+    username: azureuser
+    password: <prefix>Password1234%
+    ```
 
-```
-Give examples
-```
+2. If the cluster is already Arc connected, delete the connectedCluster resource and agents by running the following command:
+  
+    ```bash
+    az connectedk8s delete -n <cluster-name> -g <resource-group>
+    ```
 
-## Deployment
+3. Run the following command to onboard this cluster to Arc:
 
-Add additional notes about how to deploy this on a live system
+    ```bash
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    ```
 
-## Built With
+4. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
 
-Documenting some of the main tools used to build this project, manage dependencies, etc will help users get more information if they are trying to understand or having difficulties getting the project up and running.
+### Testing with basic auth proxy
 
-* Link to some dependency manager
-* Link to some framework or build tool
-* Link to some compiler, linting tool, bundler, etc
+1. Access console of the <prefix>-clustervm VM by using `Serial Console` on the resource blade of the VM with the following credentials
 
-## Contributing
+    ```bash
+    username: azureuser
+    password: <prefix>Password1234%
+    ```
 
-Please read our [CONTRIBUTING.md](CONTRIBUTING.md) which outlines all of our policies, procedures, and requirements for contributing to this project.
+2. If the cluster is already Arc connected, delete the connectedCluster resource and agents by running the following command:
+  
+    ```bash
+    az connectedk8s delete -n <cluster-name> -g <resource-group>
+    ```
 
-## Versioning and changelog
+3. Run the following command to onboard this cluster to Arc:
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](link-to-tags-or-other-release-location).
+    ```bash
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    ```
 
-It is a good practice to keep `CHANGELOG.md` file in repository that can be updated as part of a pull request.
+4. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
 
-## Authors
+### Testing with proxy + cert
 
-List main authors of this project with a couple of words about their contribution.
+1. Access console of the <prefix>-proxycertvm VM by using `Serial Console` on the resource blade of the VM with the following credentials
 
-Also insert a link to the `owners.txt` file if it exists as well as any other dashboard or other resources that lists all contributors to the project.
+    ```bash
+    username: azureuser
+    password: <prefix>Password1234%
+    ```
 
-## License
+2. Run `cat myCert.crt`. Copy the contents of this file.
+3. Access console of the <prefix>-clustervm VM by using `Serial Console` on the resource blade of the VM with the following credentials:
 
-This project is licensed under the < INSERT LICENSE NAME > - see the [LICENSE](LICENSE) file for details
+    ```bash
+    username: azureuser
+    password: <prefix>Password1234%
+    ```
 
-## Acknowledgments
+4. Save the contents of the above mentioned file as `myCert.crt` in the home directory.
+5. If the cluster is already Arc connected, delete the connectedCluster resource and agents by running the following command:
+  
+    ```bash
+    az connectedk8s delete -n <cluster-name> -g <resource-group>
+    ```
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+6. Run the following command to onboard this cluster to Arc:
+
+    ```bash
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16 --proxy-cert ./myCert.crt
+    ```
+
+7. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
+
+### Extensions and proxy
+
+Currently proxy parameters are not propagated from connectedCluster resource to the extensions deployed on them (this is in our backlog). In the interim, please take in the proxy parameters as protected configuration settings on the extension and leverage the same to hydrate proxy related values in your Helm chart. Protected configuration settings is recommended over configuration settings as values for --proxy-https or --proxy-http could contain username and password when basic auth is set up for the proxy server.
