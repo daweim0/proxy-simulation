@@ -32,9 +32,12 @@ This repo contains Terraform files that can be used to bring up a proxy simulati
 4. Execute the following commands to deploy the resources declared in the Terraform files:
 
     ```bash
+    terraform init
     terraform plan
     terraform apply
     ```
+
+    Note: terraform apply will take approximately 20 minutes to spawn all resources
 
 ## Testing different permutations of proxy
 
