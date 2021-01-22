@@ -34,7 +34,7 @@ This repo contains Terraform files that can be used to bring up a proxy simulati
     ```bash
     terraform init
     terraform plan
-    terraform apply --yes
+    terraform apply -auto-approve
     ```
 
     Note: terraform apply will take approximately 20 minutes to spawn all resources
