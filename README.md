@@ -34,7 +34,7 @@ This repo contains Terraform files that can be used to bring up a proxy simulati
     ```bash
     terraform init
     terraform plan
-    terraform apply
+    terraform apply --yes
     ```
 
     Note: terraform apply will take approximately 20 minutes to spawn all resources
@@ -61,7 +61,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
@@ -84,7 +84,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
@@ -116,7 +116,7 @@ Note down the private IP addresses of the 3 proxy VMs
 6. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https https://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16 --proxy-cert ./myCert.crt
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16 --proxy-cert ./myCert.crt
     ```
 
 7. Follow these [instructions](#extensions-and-proxy) for making your extensions proxy ready.
