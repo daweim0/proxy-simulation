@@ -30,6 +30,34 @@ resource "azurerm_subnet" "common" {
   address_prefixes     = ["172.10.1.0/24"]
 }
 
+resource "azurerm_public_ip" "proxynoauth" {
+  name                = join("-", [var.prefix, "proxynoauthpip"])
+  resource_group_name = azurerm_resource_group.common.name
+  location            = azurerm_resource_group.common.location
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_public_ip" "proxybasic" {
+  name                = join("-", [var.prefix, "proxybasicpip"])
+  resource_group_name = azurerm_resource_group.common.name
+  location            = azurerm_resource_group.common.location
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_public_ip" "proxycert" {
+  name                = join("-", [var.prefix, "proxycertpip"])
+  resource_group_name = azurerm_resource_group.common.name
+  location            = azurerm_resource_group.common.location
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_public_ip" "cluster" {
+  name                = join("-", [var.prefix, "clusterpip"])
+  resource_group_name = azurerm_resource_group.common.name
+  location            = azurerm_resource_group.common.location
+  allocation_method   = "Dynamic"
+}
+
 resource "azurerm_network_interface" "proxynoauth" {
   name                = join("-", [var.prefix, "proxnoauthnic"])
   location            = azurerm_resource_group.common.location
@@ -39,6 +67,7 @@ resource "azurerm_network_interface" "proxynoauth" {
     name                          = "configuration1"
     subnet_id                     = azurerm_subnet.common.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.proxynoauth.id
   }
 }
 
@@ -51,6 +80,7 @@ resource "azurerm_network_interface" "proxybasic" {
     name                          = "configuration2"
     subnet_id                     = azurerm_subnet.common.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.proxybasic.id
   }
 }
 
@@ -63,6 +93,7 @@ resource "azurerm_network_interface" "proxycert" {
     name                          = "configuration3"
     subnet_id                     = azurerm_subnet.common.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.proxycert.id
   }
 }
 
@@ -75,6 +106,7 @@ resource "azurerm_network_interface" "cluster" {
     name                          = "configuration3"
     subnet_id                     = azurerm_subnet.common.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.cluster.id
   }
 }
 
@@ -116,11 +148,14 @@ resource "azurerm_virtual_machine" "proxynoauth" {
   os_profile {
     computer_name  = "proxynoauth"
     admin_username = "azureuser"
-    admin_password = join("", [var.prefix, "Password1234%"])
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      key_data  = file(var.publickeypath)
+      path      = "/home/azureuser/.ssh/authorized_keys"
+    }
   }
 
   boot_diagnostics{
@@ -169,11 +204,14 @@ resource "azurerm_virtual_machine" "proxybasic" {
   os_profile {
     computer_name  = "proxybasic"
     admin_username = "azureuser"
-    admin_password = join("", [var.prefix, "Password1234%"])
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      key_data  = file(var.publickeypath)
+      path      = "/home/azureuser/.ssh/authorized_keys"
+    }
   }
 
   boot_diagnostics{
@@ -222,11 +260,14 @@ resource "azurerm_virtual_machine" "proxycert" {
   os_profile {
     computer_name  = "proxycert"
     admin_username = "azureuser"
-    admin_password = join("", [var.prefix, "Password1234%"])
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      key_data  = file(var.publickeypath)
+      path      = "/home/azureuser/.ssh/authorized_keys"
+    }
   }
 
   boot_diagnostics{
@@ -266,7 +307,7 @@ resource "azurerm_virtual_machine" "cluster" {
   }
 
   storage_os_disk {
-    name              = "clustervmdisk"
+    name              = "clusterdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -275,11 +316,14 @@ resource "azurerm_virtual_machine" "cluster" {
   os_profile {
     computer_name  = "cluster"
     admin_username = "azureuser"
-    admin_password = join("", [var.prefix, "Password1234%"])
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      key_data  = file(var.publickeypath)
+      path      = "/home/azureuser/.ssh/authorized_keys"
+    }
   }
 
   boot_diagnostics{

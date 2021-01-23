@@ -19,7 +19,7 @@ This repo contains Terraform files that can be used to bring up a proxy simulati
     az ad sp create-for-rbac
     ```
 
-3. Set the following environment variables
+3. Set the following environment variables:
 
     ```bash
     export ARM_SUBSCRIPTION_ID="<SubscriptionId>"
@@ -29,7 +29,13 @@ This repo contains Terraform files that can be used to bring up a proxy simulati
     export TF_VAR_prefix="<prefix to be used for all resources>"
     ```
 
-4. Execute the following commands to deploy the resources declared in the Terraform files:
+4. If the public key you want to use for SSH to the VMs is not stored at `~/.ssh/id_rsa.pub`, but at a different path, only then set the following optional environment variable:
+
+    ```bash
+    export TF_VAR_publickeypath="<Public key used for SSH into VMs>"
+    ```
+
+5. Execute the following commands to deploy the resources declared in the Terraform files:
 
     ```bash
     terraform init
