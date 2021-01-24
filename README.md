@@ -68,7 +68,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
@@ -90,7 +90,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>Password1234%@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
@@ -121,7 +121,7 @@ Note down the private IP addresses of the 3 proxy VMs
 7. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16 --proxy-cert ./myCert.crt
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc --proxy-cert ./myCert.crt
     ```
 
 8. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
