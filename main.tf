@@ -37,12 +37,12 @@ resource "azurerm_public_ip" "proxynoauth" {
   allocation_method   = "Dynamic"
 }
 
-resource "azurerm_public_ip" "proxybasic" {
-  name                = join("-", [var.prefix, "proxybasicpip"])
-  resource_group_name = azurerm_resource_group.common.name
-  location            = azurerm_resource_group.common.location
-  allocation_method   = "Dynamic"
-}
+# resource "azurerm_public_ip" "proxybasic" {
+#   name                = join("-", [var.prefix, "proxybasicpip"])
+#   resource_group_name = azurerm_resource_group.common.name
+#   location            = azurerm_resource_group.common.location
+#   allocation_method   = "Dynamic"
+# }
 
 resource "azurerm_public_ip" "proxycert" {
   name                = join("-", [var.prefix, "proxycertpip"])
@@ -71,18 +71,18 @@ resource "azurerm_network_interface" "proxynoauth" {
   }
 }
 
-resource "azurerm_network_interface" "proxybasic" {
-  name                = join("-", [var.prefix, "proxybasicnic"])
-  location            = azurerm_resource_group.common.location
-  resource_group_name = azurerm_resource_group.common.name
+# resource "azurerm_network_interface" "proxybasic" {
+#   name                = join("-", [var.prefix, "proxybasicnic"])
+#   location            = azurerm_resource_group.common.location
+#   resource_group_name = azurerm_resource_group.common.name
 
-  ip_configuration {
-    name                          = "configuration2"
-    subnet_id                     = azurerm_subnet.common.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.proxybasic.id
-  }
-}
+#   ip_configuration {
+#     name                          = "configuration2"
+#     subnet_id                     = azurerm_subnet.common.id
+#     private_ip_address_allocation = "Dynamic"
+#     public_ip_address_id          = azurerm_public_ip.proxybasic.id
+#   }
+# }
 
 resource "azurerm_network_interface" "proxycert" {
   name                = join("-", [var.prefix, "proxycertnic"])
@@ -180,61 +180,61 @@ resource "azurerm_virtual_machine_extension" "proxynoauth" {
   })
 }
 
-resource "azurerm_virtual_machine" "proxybasic" {
-  name                  = join("-", [var.prefix, "proxybasicvm"])
-  location              = azurerm_resource_group.common.location
-  resource_group_name   = azurerm_resource_group.common.name
-  network_interface_ids = [azurerm_network_interface.proxybasic.id]
-  vm_size               = "Standard_B2ms"
+# resource "azurerm_virtual_machine" "proxybasic" {
+#   name                  = join("-", [var.prefix, "proxybasicvm"])
+#   location              = azurerm_resource_group.common.location
+#   resource_group_name   = azurerm_resource_group.common.name
+#   network_interface_ids = [azurerm_network_interface.proxybasic.id]
+#   vm_size               = "Standard_B2ms"
 
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
-  }
+#   storage_image_reference {
+#     publisher = "Canonical"
+#     offer     = "UbuntuServer"
+#     sku       = "18.04-LTS"
+#     version   = "latest"
+#   }
 
-  storage_os_disk {
-    name              = "basicdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
+#   storage_os_disk {
+#     name              = "basicdisk"
+#     caching           = "ReadWrite"
+#     create_option     = "FromImage"
+#     managed_disk_type = "Standard_LRS"
+#   }
 
-  os_profile {
-    computer_name  = "proxybasic"
-    admin_username = "azureuser"
-  }
+#   os_profile {
+#     computer_name  = "proxybasic"
+#     admin_username = "azureuser"
+#   }
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data  = file(var.publickeypath)
-      path      = "/home/azureuser/.ssh/authorized_keys"
-    }
-  }
+#   os_profile_linux_config {
+#     disable_password_authentication = true
+#     ssh_keys {
+#       key_data  = file(var.publickeypath)
+#       path      = "/home/azureuser/.ssh/authorized_keys"
+#     }
+#   }
 
-  boot_diagnostics{
-    enabled = true
-    storage_uri = azurerm_storage_account.common.primary_blob_endpoint
-  }
-}
+#   boot_diagnostics{
+#     enabled = true
+#     storage_uri = azurerm_storage_account.common.primary_blob_endpoint
+#   }
+# }
 
-resource "azurerm_virtual_machine_extension" "proxybasic" {
-  name                 = join("-", [var.prefix, "basicextension"])
-  virtual_machine_id   = azurerm_virtual_machine.proxybasic.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
+# resource "azurerm_virtual_machine_extension" "proxybasic" {
+#   name                 = join("-", [var.prefix, "basicextension"])
+#   virtual_machine_id   = azurerm_virtual_machine.proxybasic.id
+#   publisher            = "Microsoft.Azure.Extensions"
+#   type                 = "CustomScript"
+#   type_handler_version = "2.0"
 
-  settings = jsonencode({
-    "fileUris": [
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/squid/basic.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/conf/squid-basic.conf"
-    ],
-    "commandToExecute": join(" ", ["sudo bash ./basic.sh", join("", [var.prefix, "Password1234%"])])
-  })
-}
+#   settings = jsonencode({
+#     "fileUris": [
+#       "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/squid/basic.sh",
+#       "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/conf/squid-basic.conf"
+#     ],
+#     "commandToExecute": join(" ", ["sudo bash ./basic.sh", join("", [var.prefix, "Password1234%"])])
+#   })
+# }
 
 resource "azurerm_virtual_machine" "proxycert" {
   name                  = join("-", [var.prefix, "proxycertvm"])
