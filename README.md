@@ -5,6 +5,7 @@
 This repo contains Terraform files that can be used to bring up a proxy simulation environment having the following resources:
 
 - Proxy server without authentication (plain squid installation)
+- Proxy server with basic authentication
 - Proxy server with cert
 - Single node K8s cluster with Calico and GlobalNetworkPolicy file applied to simulate proxy like environment at the workload plane of cluster. This VM also has Azure CLI, Helm 3 and latest versions of connectedk8s, k8s-extension and k8sconfiguration CLI extensions installed on the VM.
 
@@ -89,7 +90,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc after substituting `<prefix>`:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser@<prefix>welcome<proxybasic-ip-address>:3128 --proxy-http http://azureuser@<prefix>welcome<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>welcome@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>welcome@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
