@@ -72,6 +72,28 @@ Note down the private IP addresses of the 3 proxy VMs
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
 
+### Testing with basic auth proxy
+
+1. SSH into the `<prefix>-clustervm` VM by running the following command:
+
+    ```bash
+    ssh azureuser@<public-IP-address-of-clustervm>
+    ```
+
+2. If the cluster is already Arc connected, delete the connectedCluster resource and agents by running the following command:
+  
+    ```bash
+    az connectedk8s delete -n <cluster-name> -g <resource-group>
+    ```
+
+3. Run the following command to onboard this cluster to Arc after substituting `<prefix>`:
+
+    ```bash
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser@<prefix>welcome<proxybasic-ip-address>:3128 --proxy-http http://azureuser@<prefix>welcome<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
+    ```
+
+4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
+
 ### Testing with proxy + cert
 
 1. SSH into the `<prefix>-clustervm` VM by running the following command:

@@ -336,3 +336,4 @@ reports/
 *.cobertura.xml
 
 .terraform*
+terraform.tfstate
