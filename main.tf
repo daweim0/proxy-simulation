@@ -30,6 +30,17 @@ resource "azurerm_subnet" "common" {
   address_prefixes     = ["172.10.1.0/24"]
 }
 
+resource "azurerm_network_security_group" "common" {
+  name                = join("-", [var.prefix, "nsg"])
+  location            = azurerm_resource_group.common.location
+  resource_group_name = azurerm_resource_group.common.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "common" {
+  subnet_id                 = azurerm_subnet.common.id
+  network_security_group_id = azurerm_network_security_group.common.id
+}
+
 resource "azurerm_public_ip" "proxynoauth" {
   name                = join("-", [var.prefix, "proxynoauthpip"])
   resource_group_name = azurerm_resource_group.common.name
@@ -71,6 +82,11 @@ resource "azurerm_network_interface" "proxynoauth" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "proxynoauth" {
+  network_interface_id      = azurerm_network_interface.proxynoauth.id
+  network_security_group_id = azurerm_network_security_group.common.id
+}
+
 resource "azurerm_network_interface" "proxybasic" {
   name                = join("-", [var.prefix, "proxybasicnic"])
   location            = azurerm_resource_group.common.location
@@ -82,6 +98,11 @@ resource "azurerm_network_interface" "proxybasic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.proxybasic.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "proxybasic" {
+  network_interface_id      = azurerm_network_interface.proxybasic.id
+  network_security_group_id = azurerm_network_security_group.common.id
 }
 
 resource "azurerm_network_interface" "proxycert" {
@@ -97,6 +118,11 @@ resource "azurerm_network_interface" "proxycert" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "proxycert" {
+  network_interface_id      = azurerm_network_interface.proxycert.id
+  network_security_group_id = azurerm_network_security_group.common.id
+}
+
 resource "azurerm_network_interface" "cluster" {
   name                = join("-", [var.prefix, "clusternic"])
   location            = azurerm_resource_group.common.location
@@ -108,6 +134,11 @@ resource "azurerm_network_interface" "cluster" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.cluster.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "cluster" {
+  network_interface_id      = azurerm_network_interface.cluster.id
+  network_security_group_id = azurerm_network_security_group.common.id
 }
 
 resource "azurerm_storage_account" "common" {
