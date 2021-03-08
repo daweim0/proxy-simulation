@@ -68,7 +68,7 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxynoauth-ip-address>:3128 --proxy-http http://<proxynoauth-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxynoauth-privateip-address>:3128 --proxy-http http://<proxynoauth-privateip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
@@ -90,14 +90,14 @@ Note down the private IP addresses of the 3 proxy VMs
 3. Run the following command to onboard this cluster to Arc after substituting `<prefix>`:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>welcome@<proxybasic-ip-address>:3128 --proxy-http http://azureuser:<prefix>welcome@<proxybasic-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://azureuser:<prefix>welcome@<proxybasic-privateip-address>:3128 --proxy-http http://azureuser:<prefix>welcome@<proxybasic-privateip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc
     ```
 
 4. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
 
 ### Testing with proxy + cert
 
-1. SSH into the `<prefix>-clustervm` VM by running the following command:
+1. SSH into the `<prefix>-proxycertvm` VM by running the following command:
 
     ```bash
     ssh azureuser@<public-IP-address-of-proxycertvm>
@@ -121,7 +121,7 @@ Note down the private IP addresses of the 3 proxy VMs
 7. Run the following command to onboard this cluster to Arc:
 
     ```bash
-    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxycert-ip-address>:3128 --proxy-http http://<proxycert-ip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc --proxy-cert ./myCert.crt
+    az connectedk8s connect -n <cluster-name> -g <resource-group> --proxy-https http://<proxycert-privateip-address>:3128 --proxy-http http://<proxycert-privateip-address>:3128 --proxy-skip-range 10.96.0.0/16,kubernetes.default.svc --proxy-cert ./myCert.crt
     ```
 
 8. Follow these [instructions](#extensions-and-proxy) for adding outbound proxy support to your extension.
