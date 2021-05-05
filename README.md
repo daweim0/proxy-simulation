@@ -128,4 +128,5 @@ Note down the private IP addresses of the 3 proxy VMs
 
 ## Extensions and proxy
 
-Currently proxy parameters are not propagated from connectedCluster resource to the extensions deployed on them (this is in our backlog). In the interim, please take in the proxy parameters as protected configuration settings on the extension and leverage the same to hydrate proxy related values in your Helm chart. Protected configuration settings is recommended over configuration settings as values for --proxy-https or --proxy-http could contain username and password when basic auth is set up for the proxy server.
+1. Details on what every extension team needs to do to add proxy support is available [here](https://dev.azure.com/msazure/One/_wiki/wikis/One.wiki/138886/Add-outbound-proxy-support?anchor=what-do-extension-authors-need-to-do-to-add-outbound-proxy-support-on-their-extensions%3F)
+1. Proxy parameters are propagated from connected cluster to extensions as per [this contract](https://dev.azure.com/msazure/One/_wiki/wikis/One.wiki/142401/Extension-Metadata?anchor=extension-metadata).
