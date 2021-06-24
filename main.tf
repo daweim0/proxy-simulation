@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "common" {
   name     = var.prefix
-  location = "East US"
+  location = "East US2"
 }
 
 resource "azurerm_virtual_network" "common" {
@@ -204,8 +204,8 @@ resource "azurerm_virtual_machine_extension" "proxynoauth" {
 
   settings = jsonencode({
     "fileUris": [
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/squid/noauth.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/conf/squid-noauth.conf"
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/master/scripts/squid/noauth.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/conf/squid-noauth.conf"
     ],
     "commandToExecute": "sudo bash ./noauth.sh"
   })
@@ -260,8 +260,8 @@ resource "azurerm_virtual_machine_extension" "proxybasic" {
 
   settings = jsonencode({
     "fileUris": [
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/squid/basic.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/conf/squid-basic.conf"
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/squid/basic.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/conf/squid-basic.conf"
     ],
     "commandToExecute": join(" ", ["sudo bash ./basic.sh", join("", [var.prefix, "welcome"])])
   })
@@ -316,8 +316,8 @@ resource "azurerm_virtual_machine_extension" "proxycert" {
 
   settings = jsonencode({
     "fileUris": [
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/squid/cert.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/conf/squid-cert.conf"
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/squid/cert.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/conf/squid-cert.conf"
     ],
     "commandToExecute": join(" ", ["sudo bash ./cert.sh", azurerm_network_interface.proxycert.private_ip_address])
   })
@@ -372,10 +372,10 @@ resource "azurerm_virtual_machine_extension" "cluster" {
 
   settings = jsonencode({
     "fileUris": [
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/cluster/main.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/cluster/prepare-cluster-node.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/cluster/bootstrap-master-node.sh",
-      "https://raw.githubusercontent.com/shashankbarsin/proxy-simulation/main/scripts/cluster/install-utils.sh"
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/cluster/main.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/cluster/prepare-cluster-node.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/cluster/bootstrap-master-node.sh",
+      "https://raw.githubusercontent.com/daweim0/proxy-simulation/main/scripts/cluster/install-utils.sh"
     ],
     "commandToExecute": join(" ", ["sudo bash ./main.sh", azurerm_network_interface.proxynoauth.private_ip_address, azurerm_network_interface.proxybasic.private_ip_address, azurerm_network_interface.proxycert.private_ip_address, var.connectedk8s_source, var.k8s_extension_source, var.k8sconfiguration_source])
   })
