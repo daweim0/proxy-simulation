@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y libssl-dev pkg-config build-essential autoconf apache2-utils gcc make
+sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y libssl-dev pkg-config build-essential autoconf apache2-utils gcc make g++
 
 source ~/.bashrc
 
