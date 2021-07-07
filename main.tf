@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "common" {
   name     = var.prefix
-  location = "East US2"
+  location = "West US2"
 }
 
 resource "azurerm_virtual_network" "common" {
