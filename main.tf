@@ -160,7 +160,7 @@ resource "azurerm_virtual_machine" "proxynoauth" {
   location              = azurerm_resource_group.common.location
   resource_group_name   = azurerm_resource_group.common.name
   network_interface_ids = [azurerm_network_interface.proxynoauth.id]
-  vm_size               = "Standard_B2ms"
+  vm_size               = "Standard_B2s"
 
   storage_image_reference {
     publisher = "Canonical"
@@ -216,7 +216,7 @@ resource "azurerm_virtual_machine" "proxybasic" {
   location              = azurerm_resource_group.common.location
   resource_group_name   = azurerm_resource_group.common.name
   network_interface_ids = [azurerm_network_interface.proxybasic.id]
-  vm_size               = "Standard_B2ms"
+  vm_size               = "Standard_B2s"
 
   storage_image_reference {
     publisher = "Canonical"
@@ -272,7 +272,7 @@ resource "azurerm_virtual_machine" "proxycert" {
   location              = azurerm_resource_group.common.location
   resource_group_name   = azurerm_resource_group.common.name
   network_interface_ids = [azurerm_network_interface.proxycert.id]
-  vm_size               = "Standard_B2ms"
+  vm_size               = "Standard_B2s"
 
   storage_image_reference {
     publisher = "Canonical"

@@ -20,3 +20,7 @@ kubectl apply -f simulation.yaml --kubeconfig /etc/kubernetes/admin.conf
 mkdir -p /home/azureuser/.kube
 sudo cp /etc/kubernetes/admin.conf /home/azureuser/.kube/config
 sudo chown azureuser:azureuser /home/azureuser/.kube/config
+
+
+# kubectl edit globalnetworkpolicies.crd.projectcalico.org allow-tcp-incluster -o yaml 
+# add ports 10250 and 10255 to the ingress section
